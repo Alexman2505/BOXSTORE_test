@@ -205,3 +205,26 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+
+# Мои кастомные настройки гита.
+*.csv
+*.xlsx
+*.db
+photo-server.tar
+*photo-server.*.tar
+*.tar
+# Media files
+*/media/
+/media/
+/media/*
+!/media/.gitkeep
+media/
+*.bak
+*/staticfiles/
+/staticfiles/*
+staticfiles/
+/staticfiles/
+migrations/
+**/migrations/
+*/180126
