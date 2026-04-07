@@ -1,3 +1,6 @@
+
+
+
 Необходимо создать мини-сервис — REST API для загрузки, хранения и агрегации данных о продажах с маркетплейсов
 
 Сервис должен:
@@ -116,14 +119,14 @@ Query-параметры:
 sales_aggregator/
 ├── main.py              # Точка входа FastAPI
 ├── models/
-│   ├── sale.py          # Pydantic-модели
-│   └── analytics.py     # Модели ответов аналитики
-├── routers/
-│   ├── sales.py         # CRUD эндпоинты
-│   └── analytics.py     # Аналитические эндпоинты
-├── services/
+│   ├── sale.py          # Pydantic-модели (Что приходит от клиента)
+│   └── analytics.py     # Модели ответов аналитики (Что возвращается клиенту)
+├── routers/             # описание эндпойнтов путей
+│   ├── sales.py         # CRUD эндпоинты (Использует sale.py)
+│   └── analytics.py     # Аналитические эндпоинты (Использует analytics.py)
+├── services/            # Бизнес логика (работа со входящими моделями и выдача данных для исходящих)
 │   ├── storage.py       # Хранение данных (in-memory или SQLite)
-│   ├── aggregation.py   # Логика агрегации (Pandas)
+│   ├── aggregation.py   # Логика агрегации (Pandas, Возвращает dict, а не модели)
 │   └── currency.py      # Работа с API курсов валют
 ├── requirements.txt
 └── README.md            # Инструкция по запуску

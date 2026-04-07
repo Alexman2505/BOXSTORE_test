@@ -1,0 +1,21 @@
+order_id,marketplace,product_name,quantity,price,cost_price,status,sold_at
+ORD-001,ozon,Кабель USB-C,3,450.00,120.00,delivered,2025-03-01
+ORD-002,wildberries,Чехол для iPhone 15,1,1200.00,350.00,delivered,2025-03-01
+ORD-003,ozon,Наушники TWS,2,2500.00,800.00,delivered,2025-03-02
+ORD-004,yandex_market,Зарядное устройство 65W,1,1800.00,600.00,returned,2025-03-02
+ORD-005,wildberries,Кабель USB-C,5,450.00,120.00,delivered,2025-03-03
+ORD-006,ozon,Подставка для ноутбука,1,3200.00,1100.00,delivered,2025-03-03
+ORD-007,ozon,Коврик для мыши XL,2,890.00,200.00,cancelled,2025-03-04
+ORD-008,wildberries,Наушники TWS,1,2700.00,800.00,delivered,2025-03-04
+ORD-009,yandex_market,Кабель USB-C,10,399.00,120.00,delivered,2025-03-05
+ORD-010,ozon,Веб-камера 1080p,1,2100.00,750.00,delivered,2025-03-05
+ORD-011,wildberries,Подставка для ноутбука,2,3500.00,1100.00,returned,2025-03-06
+ORD-012,ozon,Чехол для iPhone 15,3,1100.00,350.00,delivered,2025-03-06
+ORD-013,yandex_market,Наушники TWS,1,2600.00,800.00,delivered,2025-03-07
+ORD-014,wildberries,Зарядное устройство 65W,2,1900.00,600.00,delivered,2025-03-07
+ORD-015,ozon,Кабель USB-C,4,450.00,120.00,delivered,2025-03-08
+ORD-016,ozon,Мышь беспроводная,1,1500.00,450.00,cancelled,2025-03-08
+ORD-017,wildberries,Веб-камера 1080p,1,2200.00,750.00,delivered,2025-03-09
+ORD-018,yandex_market,Коврик для мыши XL,3,950.00,200.00,delivered,2025-03-09
+ORD-019,ozon,Наушники TWS,2,2500.00,800.00,returned,2025-03-10
+ORD-020,wildberries,Мышь беспроводная,2,1600.00,450.00,delivered,2025-03-10
