@@ -1,6 +1,28 @@
+# Sales Aggregator API
 
+Мини-сервис для агрегации данных о продажах с маркетплейсов (Ozon, Wildberries, Yandex Market).
 
+## 📦 Установка и запуск
 
+### 1. Клонировать репозиторий
+
+```bash
+git clone git@github.com:Alexman2505/BOXSTORE_test.git
+cd BOXSTORE_test
+```
+### 2. Создайте и активируйте виртуальное окружение. Установите в виртуальное окружение библиотеки для проекта.
+```bash
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+```
+### 3. Запустите одной командой
+```bash
+python main.py
+```
+## Интерактиваня документация доступна по локальному адресу http://127.0.0.1:8008/docs
+
+## Описание проекта
 Необходимо создать мини-сервис — REST API для загрузки, хранения и агрегации данных о продажах с маркетплейсов
 
 Сервис должен:
@@ -54,6 +76,9 @@ Query-параметры (все опциональные):
 - `status` — фильтр по статусу
 - `date_from`, `date_to` — фильтр по диапазону дат
 - `page`, `page_size` — пагинация (по умолчанию page=1, page_size=20)
+
+### DELETE /sales/clear
+Чистка базы
 
 ### GET /analytics/summary
 Агрегированные метрики за период
