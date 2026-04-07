@@ -110,12 +110,19 @@ def calculate_summary(sales: List[Sale]) -> SummaryMetrics:
         avg_order_value = 0.0
 
     # ========== ШАГ 7: Считаем долю возвратов ==========
-    # Считаем количество возвратов (status == "returned")
     returned_count = len(df[df["status"] == "returned"])
     delivered_count = len(delivered_df)
 
-    # Доля возвратов = (возвраты / (доставленные + возвраты)) × 100%
-    return_rate = (returned_count / delivered_count + returned_count) * 100
+    total_delivered_and_returned = delivered_count + returned_count
+    if total_delivered_and_returned > 0:
+        raw_rate = (returned_count / total_delivered_and_returned) * 100
+        # Защита от некорректных значений (NaN, inf, больше 100)
+        if pd.isna(raw_rate) or pd.isinf(raw_rate):
+            return_rate = 0.0
+        else:
+            return_rate = min(raw_rate, 100.0)  # ← максимум 100%
+    else:
+        return_rate = 0.0
 
     # ========== ШАГ 8: Возвращаем результат ==========
     # Округляем все числа до 2 знаков

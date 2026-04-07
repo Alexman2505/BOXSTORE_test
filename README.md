@@ -2,26 +2,12 @@
 
 Мини-сервис для агрегации данных о продажах с маркетплейсов (Ozon, Wildberries, Yandex Market).
 
-## 📦 Установка и запуск (без докера)
+## Сервис успешно создан,
+## Образ собран,
+## Сервис даже успешно развернут на рендере (!!!) https://render.com/ по адресу
+## https://boxstore-api-image-latest.onrender.com/docs
 
-### 1. Клонировать репозиторий
-
-```bash
-git clone git@github.com:Alexman2505/BOXSTORE_test.git
-cd BOXSTORE_test
-```
-### 2. Создайте и активируйте виртуальное окружение. Установите в виртуальное окружение библиотеки для проекта.
-```bash
-python -m venv venv
-source venv/Scripts/activate
-pip install -r requirements.txt
-```
-### 3. Запустите одной командой
-```bash
-python main.py
-```
-### Интерактиваня документация доступна по локальному адресу http://127.0.0.1:8008/docs
-
+## Для локальной проверки сервиса можно использовать докер из папки с проектом, либо запустить по инструкции main.py из главной директории проекта
 
 ## 🐳 Запуск через Docker
 
@@ -67,6 +53,26 @@ docker rmi boxstore-api-image
 docker images
 docker system prune -f
 ```
+
+## 📦 Установка и запуск (без докера)
+
+### 1. Клонировать репозиторий
+
+```bash
+git clone git@github.com:Alexman2505/BOXSTORE_test.git
+cd BOXSTORE_test
+```
+### 2. Создайте и активируйте виртуальное окружение. Установите в виртуальное окружение библиотеки для проекта.
+```bash
+python -m venv venv
+source venv/Scripts/activate
+pip install -r requirements.txt
+```
+### 3. Запустите одной командой
+```bash
+python main.py
+```
+### Интерактиваня документация доступна по локальному адресу http://127.0.0.1:8008/docs
 
 ### Описание проекта
 Необходимо создать мини-сервис — REST API для загрузки, хранения и агрегации данных о продажах с маркетплейсов
