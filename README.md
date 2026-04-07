@@ -2,7 +2,7 @@
 
 Мини-сервис для агрегации данных о продажах с маркетплейсов (Ozon, Wildberries, Yandex Market).
 
-## 📦 Установка и запуск
+## 📦 Установка и запуск (без докера)
 
 ### 1. Клонировать репозиторий
 
@@ -20,9 +20,55 @@ pip install -r requirements.txt
 ```bash
 python main.py
 ```
-## Интерактиваня документация доступна по локальному адресу http://127.0.0.1:8008/docs
+### Интерактиваня документация доступна по локальному адресу http://127.0.0.1:8008/docs
 
-## Описание проекта
+
+## 🐳 Запуск через Docker
+
+### Предварительные требования
+
+- Установленный [Docker](https://www.docker.com/products/docker-desktop/)
+
+### Шаги для запуска
+
+```bash
+# 1. Клонировать репозиторий
+git clone git@github.com:Alexman2505/BOXSTORE_test.git
+cd BOXSTORE_test
+```
+
+# 2. Собрать Docker образ
+```bash
+docker build -t boxstore-api-image .
+```
+
+# 3. Запустить контейнер и проверить
+```bash
+docker run -d -p 8008:8008 --name boxstore-api-container boxstore-api-image
+docker ps
+```
+
+# 4. После запуска проверить в браузере:
+API: http://localhost:8008
+Документация: http://localhost:8008/docs
+
+### 4. Остановка и удаление
+
+### Остановить и удалить контейнер. Проверить контейнеры (отсутствие)
+```bash
+docker stop boxstore-api-container
+docker rm boxstore-api-container
+docker ps -a
+```
+
+### Удалить образ и кэш
+```bash
+docker rmi boxstore-api-image
+docker images
+docker system prune -f
+```
+
+### Описание проекта
 Необходимо создать мини-сервис — REST API для загрузки, хранения и агрегации данных о продажах с маркетплейсов
 
 Сервис должен:

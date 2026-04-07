@@ -1,0 +1,36 @@
+# Виртуальное окружение
+venv/
+env/
+.venv/
+
+# Файлы Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# База данных (не копируем существующую)
+*.db
+*.sqlite
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Git
+.git/
+.gitignore
+
+# Документация
+README.md
+*.md
+
+# Логи
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
