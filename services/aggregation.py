@@ -2,6 +2,7 @@ import pandas as pd
 from models.sale import Sale
 from models.analytics import SummaryMetrics
 from typing import List
+import math
 
 
 def calculate_summary(sales: List[Sale]) -> SummaryMetrics:
@@ -117,10 +118,10 @@ def calculate_summary(sales: List[Sale]) -> SummaryMetrics:
     if total_delivered_and_returned > 0:
         raw_rate = (returned_count / total_delivered_and_returned) * 100
         # Защита от некорректных значений (NaN, inf, больше 100)
-        if pd.isna(raw_rate) or pd.isinf(raw_rate):
+        if pd.isna(raw_rate) or math.isinf(raw_rate):
             return_rate = 0.0
         else:
-            return_rate = min(raw_rate, 100.0)  # ← максимум 100%
+            return_rate = min(raw_rate, 100.0)
     else:
         return_rate = 0.0
 
