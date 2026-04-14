@@ -6,15 +6,15 @@ spec:
   replicas: 2
   selector:
     matchLabels:
-      app: boxstore-api          # ← этот label должен совпадать с selector в Service
+      app: boxstore-api
   template:
     metadata:
       labels:
-        app: boxstore-api        # ← этот label должен совпадать с selector в Service
+        app: boxstore-api
     spec:
       containers:
         - name: boxstore-api
-          image: boxstore-api:latest
+          image: boxstore-api-image
           imagePullPolicy: Never
           ports:
             - containerPort: 8008

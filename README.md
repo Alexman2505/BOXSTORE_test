@@ -24,6 +24,7 @@ cd BOXSTORE_test
 ```
 
 # 2. Собрать Docker образ
+Образ собирается с именем `boxstore-api-image`:
 ```bash
 docker build -t boxstore-api-image .
 ```
@@ -74,7 +75,8 @@ python main.py
 ```
 ### Интерактиваня документация доступна по локальному адресу http://127.0.0.1:8008/docs
 
-### Раздел Kubernetes
+
+## Раздел Kubernetes
 ```bash
 Windows (хост)
 │
@@ -88,25 +90,30 @@ Windows (хост)
     ├── /mnt/d/Dev/boxstore_test/  ← Доступ к коду (монтирование)
     │
     ├── Docker (движок)
-    │   └── Образ: boxstore-api:latest
+    │   └── Образ: boxstore-api-image
     │       └── Контейнер (если запустить docker run)
     │
-    └── Minikube (Kubernetes)
+    └──Кластер Kubernetes (Minikube)
         │
-        ├── Копия образа boxstore-api:latest (внутренний реестр)
-        │
-        ├── Pod-1 (контейнер из образа)  ← управляется Kubernetes
-        ├── Pod-2 (контейнер из образа)  ← управляется Kubernetes
-        │
-        └── Service (порт 30008) → Доступ из браузера Windows
+        └── Нода (Node) — сервер/машина
+            │
+            ├── Под (Pod 1) — API
+            │   └── Контейнер (boxstore-api)
+            │
+            ├── Под (Pod 2) — API (реплика)
+            │   └── Контейнер (boxstore-api)
+            │
+            └── Другие поды (coredns, kube-proxy...)
+                │
+                └── Service (порт 30008) → Доступ из браузера Windows
 
 ┌───────────────────────────────────────────────────┐
-│             POD ( минимальная и неделимая единица)│
+│       POD ( минимальная и неделимая единица)      │
 │  ┌─────────────────────────────────────────────┐  │
 │  │              Контейнер                      │  │
 │  │  ┌───────────────────────────────────────┐  │  │
 │  │  │         Docker-образ                  │  │  │
-│  │  │  alexman2505/boxstore-api-image:latest│  │  │
+│  │  │         boxstore-api-image            │  │  │
 │  │  └───────────────────────────────────────┘  │  │
 │  │                                             │  │
 │  │  FastAPI приложение                         │  │
@@ -115,6 +122,32 @@ Windows (хост)
 │                                                   │
 │  IP-адрес: 10.244.0.5 (внутри кластера)           │
 └───────────────────────────────────────────────────┘
+```
+
+📋 Краткая шпаргалка
+```bash
+Действие	Команда
+
+Очистить поды	kubectl delete -f k8s/deployment.yaml
+
+Очистить сервис	kubectl delete -f k8s/service.yaml
+
+Остановить Minikube	minikube stop
+
+Удалить Minikube	minikube delete
+
+Запустить Minikube	minikube start
+
+Собрать образ	docker build -t boxstore-api-image .
+
+Загрузить образ	minikube image load boxstore-api-image
+
+Запустить деплоймент (манифесты)	kubectl apply -f k8s/deployment.yaml
+Запустить сервис (манифесты)	kubectl apply -f k8s/service.yaml
+
+Проверить поды kubectl get pods
+
+Открыть доступ	minikube service boxstore-api-service
 ```
 
 ### Описание проекта
