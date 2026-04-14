@@ -1,0 +1,3 @@
+werf:
+  image:
+    app: {}

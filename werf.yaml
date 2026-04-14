@@ -1,0 +1,6 @@
+configVersion: 1
+project: boxstore-api
+---
+image: app
+dockerfile: Dockerfile
+context: .
