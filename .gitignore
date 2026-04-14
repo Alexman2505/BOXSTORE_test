@@ -228,3 +228,4 @@ staticfiles/
 migrations/
 **/migrations/
 */180126
+minikube-linux-amd64
