@@ -136,30 +136,21 @@ Windows (хост)
 ```
 
 📋 Краткая шпаргалка
-```bash
-Действие	Команда
 
-Очистить поды	kubectl delete -f k8s/deployment.yaml
+| Действие | Команда |
+| :--- | :--- |
+| **Очистить поды** | `kubectl delete -f k8s/deployment.yaml` |
+| **Очистить сервис** | `kubectl delete -f k8s/service.yaml` |
+| **Остановить Minikube** | `minikube stop` |
+| **Удалить Minikube** | `minikube delete` |
+| **Запустить Minikube** | `minikube start` |
+| **Собрать образ** | `docker build -t boxstore-api-image .` |
+| **Загрузить образ** | `minikube image load boxstore-api-image` |
+| **Запустить деплоймент** | `kubectl apply -f k8s/deployment.yaml` |
+| **Запустить сервис** | `kubectl apply -f k8s/service.yaml` |
+| **Проверить поды** | `kubectl get pods` |
+| **Открыть доступ** | `minikube service boxstore-api-service` |
 
-Очистить сервис	kubectl delete -f k8s/service.yaml
-
-Остановить Minikube	minikube stop
-
-Удалить Minikube	minikube delete
-
-Запустить Minikube	minikube start
-
-Собрать образ	docker build -t boxstore-api-image .
-
-Загрузить образ	minikube image load boxstore-api-image
-
-Запустить деплоймент (манифесты)	kubectl apply -f k8s/deployment.yaml
-Запустить сервис (манифесты)	kubectl apply -f k8s/service.yaml
-
-Проверить поды kubectl get pods
-
-Открыть доступ	minikube service boxstore-api-service
-```
 
 ### Описание проекта
 Необходимо создать мини-сервис — REST API для загрузки, хранения и агрегации данных о продажах с маркетплейсов
