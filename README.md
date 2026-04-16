@@ -9,6 +9,17 @@
 
 ## Для локальной проверки сервиса можно использовать докер из папки с проектом, либо запустить по инструкции main.py из главной директории проекта
 
+| Эндпоинт | Роутер | Сервис storage | Сервис aggregation | Сервис currency |
+| :--- | :--- | :--- | :--- | :--- |
+| **POST** `/sales` | `sales.py` | `add_sales()` | ❌ | ❌ |
+| **GET** `/sales` | `sales.py` | `get_sales_count()` + `get_sales_with_pagination()` | ❌ | ❌ |
+| **DELETE** `/sales/clear` | `sales.py` | `clear_storage()` | ❌ | ❌ |
+| **GET** `/analytics/summary` | `analytics.py` | `get_sales()` | `calculate_summary()` | ❌ |
+| **GET** `/analytics/top-products` | `analytics.py` | `get_sales()` | `calculate_top_products()` | ❌ |
+| **GET** `/analytics/summary-usd` | `analytics.py` | `get_sales()` | `calculate_summary()` | `get_usd_rate()` |
+| **POST** `/analytics/upload-csv` | `analytics.py` | `add_sales()` | ❌ | ❌ |
+
+
 ## 🐳 Запуск через Docker
 
 ### Предварительные требования
