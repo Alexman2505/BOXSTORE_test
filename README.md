@@ -71,6 +71,11 @@ docker images
 docker system prune -f
 ```
 
+### 8. Набор команд при редактировании кода и автоматическом перезаливе на докерхаб
+```bash
+docker stop boxstore-api-container && docker rm boxstore-api-container && docker build -t alexman2505/boxstore-api-image:latest . && docker push alexman2505/boxstore-api-image:latest
+``
+
 ## 📦 Установка и запуск (без докера)
 
 ### 1. Клонировать репозиторий
