@@ -34,34 +34,39 @@ git clone git@github.com:Alexman2505/BOXSTORE_test.git
 cd BOXSTORE_test
 ```
 
-# 2. Собрать Docker образ
-Образ собирается с именем `boxstore-api-image`:
+### 2. Собрать Docker образ
+Образ собирается с именем `alexman2505/boxstore-api-image:latest`:
 ```bash
-docker build -t boxstore-api-image .
+docker build -t alexman2505/boxstore-api-image:latest .
 ```
 
-# 3. Запустить контейнер и проверить
+### 3. Запустить контейнер и проверить
 ```bash
-docker run -d -p 8008:8008 --name boxstore-api-container boxstore-api-image
+docker run -d -p 8008:8008 --name boxstore-api-container alexman2505/boxstore-api-image:latest
 docker ps
 ```
 
-# 4. После запуска проверить в браузере:
+### 4. После запуска проверить в браузере:
 API: http://localhost:8008
 Документация: http://localhost:8008/docs
 
-### 4. Остановка и удаление
+### 5. Загрузка образа на Docker Hub (для деплоя на Render)
+```bash
+# Отправить образ на Docker Hub
+docker push alexman2505/boxstore-api-image:latest
+```
 
-### Остановить и удалить контейнер. Проверить контейнеры (отсутствие)
+### 6. Остановить и удалить контейнер. Проверить контейнеры (отсутствие)
+
 ```bash
 docker stop boxstore-api-container
 docker rm boxstore-api-container
 docker ps -a
 ```
 
-### Удалить образ и кэш
+### 7. Удалить образ и кэш
 ```bash
-docker rmi boxstore-api-image
+docker rmi alexman2505/boxstore-api-image:latest
 docker images
 docker system prune -f
 ```
@@ -101,7 +106,7 @@ Windows (хост)
     ├── /mnt/d/Dev/boxstore_test/  ← Доступ к коду (монтирование)
     │
     ├── Docker (движок)
-    │   └── Образ: boxstore-api-image
+    │   └── Образ: alexman2505/boxstore-api-image:latest
     │       └── Контейнер (если запустить docker run)
     │
     └──Кластер Kubernetes (Minikube)
@@ -124,7 +129,7 @@ Windows (хост)
 │  │              Контейнер                      │  │
 │  │  ┌───────────────────────────────────────┐  │  │
 │  │  │         Docker-образ                  │  │  │
-│  │  │         boxstore-api-image            │  │  │
+│  │  │ alexman2505/boxstore-api-image:latest │  │  │
 │  │  └───────────────────────────────────────┘  │  │
 │  │                                             │  │
 │  │  FastAPI приложение                         │  │
@@ -144,8 +149,8 @@ Windows (хост)
 | **Остановить Minikube** | `minikube stop` |
 | **Удалить Minikube** | `minikube delete` |
 | **Запустить Minikube** | `minikube start` |
-| **Собрать образ** | `docker build -t boxstore-api-image .` |
-| **Загрузить образ** | `minikube image load boxstore-api-image` |
+| **Собрать образ** | `docker build -t alexman2505/boxstore-api-image:latest .` |
+| **Загрузить образ в Minikube** | `minikube image load alexman2505/boxstore-api-image:latest` |
 | **Запустить деплоймент** | `kubectl apply -f k8s/deployment.yaml` |
 | **Запустить сервис** | `kubectl apply -f k8s/service.yaml` |
 | **Проверить поды** | `kubectl get pods` |

@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: boxstore-api
-          image: boxstore-api-image
+          image: alexman2505/boxstore-api-image:latest   # ← полное имя!
           imagePullPolicy: Never
           ports:
             - containerPort: 8008

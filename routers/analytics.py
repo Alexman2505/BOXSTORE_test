@@ -17,7 +17,12 @@ from services.currency import get_usd_rate
 from typing import List
 from datetime import date
 import pandas as pd
-from io import StringIO
+from io import StringIO, BytesIO
+
+# === для экселя ===========
+from fastapi.responses import StreamingResponse
+from openpyxl import Workbook
+from openpyxl.styles import Font
 
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
@@ -296,3 +301,299 @@ async def upload_csv(
         "error_count": len(errors),
         "errors": errors[:20],  # возвращаем не более 20 ошибок
     }
+
+
+# ========== НОВЫЕ ЭНДПОИНТЫ ДЛЯ EXCEL ==========
+
+
+# ========== НОВЫЕ ЭНДПОИНТЫ ДЛЯ EXCEL ==========
+
+
+@router.get("/export-raw-data")
+async def export_raw_data_to_excel() -> StreamingResponse:
+    """
+    GET /analytics/export-raw-data
+    Выгружает все продажи из базы в Excel-файл
+    """
+
+    # 1. Получаем все продажи из БД
+    sales = get_sales()  # без фильтров, все данные
+
+    # 2. Создаем Excel-файл
+    wb = Workbook()
+    ws = wb.active
+    ws.title = "Продажи"
+
+    # 3. Записываем заголовки
+    ws.append(
+        [
+            "order_id",
+            "marketplace",
+            "product_name",
+            "quantity",
+            "price",
+            "cost_price",
+            "status",
+            "sold_at",
+        ]
+    )
+
+    # 4. Записываем данные
+    for sale in sales:
+        ws.append(
+            [
+                sale.order_id,
+                sale.marketplace,
+                sale.product_name,
+                sale.quantity,
+                sale.price,
+                sale.cost_price,
+                sale.status,
+                sale.sold_at.isoformat(),
+            ]
+        )
+
+    # 5. Авто-подбор ширины колонок
+    for col in ws.columns:
+        max_length = 0
+        col_letter = col[0].column_letter
+        for cell in col:
+            try:
+                if len(str(cell.value)) > max_length:
+                    max_length = len(str(cell.value))
+            except:
+                pass
+        adjusted_width = min(max_length + 2, 30)
+        ws.column_dimensions[col_letter].width = adjusted_width
+
+    # 6. Сохраняем в память и отдаем
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": "attachment; filename=sales_data.xlsx"
+        },
+    )
+
+
+@router.get("/export-analytics")
+async def export_analytics_to_excel(
+    date_from: date = Query(..., description="Начальная дата"),
+    date_to: date = Query(..., description="Конечная дата"),
+    marketplace: str | None = Query(None),
+) -> StreamingResponse:
+    """
+    GET /analytics/export-analytics
+    Выгружает аналитические метрики в Excel-файл
+    """
+
+    # 1. Получаем данные
+    sales = get_sales(
+        marketplace=marketplace, date_from=date_from, date_to=date_to
+    )
+    metrics = calculate_summary(sales)
+    top_products = calculate_top_products(sales, limit=10)
+
+    # 2. Создаем Excel-файл
+    wb = Workbook()
+
+    # Лист 1: Сводные метрики
+    ws_summary = wb.active
+    ws_summary.title = "Сводка"
+
+    ws_summary.append(["Метрика", "Значение"])
+    ws_summary.append(["total_revenue", metrics.total_revenue])
+    ws_summary.append(["total_cost", metrics.total_cost])
+    ws_summary.append(["gross_profit", metrics.gross_profit])
+    ws_summary.append(["margin_percent", f"{metrics.margin_percent}%"])
+    ws_summary.append(["total_orders", metrics.total_orders])
+    ws_summary.append(["avg_order_value", metrics.avg_order_value])
+    ws_summary.append(["return_rate", f"{metrics.return_rate}%"])
+
+    # Форматирование сводки
+    ws_summary.column_dimensions["A"].width = 20
+    ws_summary.column_dimensions["B"].width = 20
+    ws_summary["A1"].font = Font(bold=True)
+    ws_summary["B1"].font = Font(bold=True)
+
+    # Лист 2: Топ продуктов
+    ws_products = wb.create_sheet("Топ продуктов")
+    ws_products.append(["Продукт", "Выручка", "Количество", "Прибыль"])
+
+    for p in top_products:
+        ws_products.append(
+            [p["product_name"], p["revenue"], p["quantity"], p["profit"]]
+        )
+
+    # Форматирование таблицы
+    ws_products.column_dimensions["A"].width = 25
+    ws_products.column_dimensions["B"].width = 15
+    ws_products.column_dimensions["C"].width = 15
+    ws_products.column_dimensions["D"].width = 15
+    ws_products["A1"].font = Font(bold=True)
+    ws_products["B1"].font = Font(bold=True)
+    ws_products["C1"].font = Font(bold=True)
+    ws_products["D1"].font = Font(bold=True)
+
+    # 3. Сохраняем и отдаем
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": f"attachment; filename=analytics_{date_from}_to_{date_to}.xlsx"
+        },
+    )
+
+
+@router.get("/export-analytics-with-macro")
+async def export_analytics_with_macro_instruction(
+    date_from: date = Query(..., description="Начальная дата"),
+    date_to: date = Query(..., description="Конечная дата"),
+    marketplace: str | None = Query(None),
+) -> StreamingResponse:
+    """
+    GET /analytics/export-analytics-with-macro
+    Выгружает аналитику в Excel-файл с листом-инструкцией и VBA-кодом
+    """
+
+    # 1. Получаем данные
+    sales = get_sales(
+        marketplace=marketplace, date_from=date_from, date_to=date_to
+    )
+    metrics = calculate_summary(sales)
+    top_products = calculate_top_products(sales, limit=10)
+
+    # 2. Создаем Excel-файл
+    wb = Workbook()
+
+    # ========== ЛИСТ 1: Сводка ==========
+    ws_summary = wb.active
+    ws_summary.title = "Сводка"
+
+    ws_summary.append(["Метрика", "Значение"])
+    ws_summary.append(["total_revenue", metrics.total_revenue])
+    ws_summary.append(["total_cost", metrics.total_cost])
+    ws_summary.append(["gross_profit", metrics.gross_profit])
+    ws_summary.append(["margin_percent", f"{metrics.margin_percent}%"])
+    ws_summary.append(["total_orders", metrics.total_orders])
+    ws_summary.append(["avg_order_value", metrics.avg_order_value])
+    ws_summary.append(["return_rate", f"{metrics.return_rate}%"])
+
+    ws_summary.column_dimensions["A"].width = 20
+    ws_summary.column_dimensions["B"].width = 20
+    ws_summary["A1"].font = Font(bold=True)
+    ws_summary["B1"].font = Font(bold=True)
+
+    # ========== ЛИСТ 2: Топ продуктов ==========
+    ws_products = wb.create_sheet("Топ продуктов")
+    ws_products.append(["Продукт", "Выручка", "Количество", "Прибыль"])
+
+    for p in top_products:
+        ws_products.append(
+            [p["product_name"], p["revenue"], p["quantity"], p["profit"]]
+        )
+
+    ws_products.column_dimensions["A"].width = 25
+    ws_products.column_dimensions["B"].width = 15
+    ws_products.column_dimensions["C"].width = 15
+    ws_products.column_dimensions["D"].width = 15
+    ws_products["A1"].font = Font(bold=True)
+    ws_products["B1"].font = Font(bold=True)
+    ws_products["C1"].font = Font(bold=True)
+    ws_products["D1"].font = Font(bold=True)
+
+    # ========== ЛИСТ 3: Инструкция + VBA-код ==========
+    ws_instruction = wb.create_sheet("Инструкция")
+
+    ws_instruction["A1"] = (
+        "ИНСТРУКЦИЯ ПО АВТОМАТИЧЕСКОМУ ФОРМАТИРОВАНИЮ ОТЧЕТА"
+    )
+    ws_instruction["A1"].font = Font(bold=True, size=14)
+    ws_instruction.merge_cells("A1:E1")
+
+    ws_instruction["A3"] = "ШАГ 1: Открыть редактор VBA"
+    ws_instruction["A3"].font = Font(bold=True)
+    ws_instruction["A4"] = (
+        "Нажмите Alt + F11 (Windows) или Fn + Option + F11 (Mac)"
+    )
+
+    ws_instruction["A6"] = "ШАГ 2: Вставить новый модуль"
+    ws_instruction["A6"].font = Font(bold=True)
+    ws_instruction["A7"] = 'В меню редактора выберите: Insert → Module'
+
+    ws_instruction["A9"] = "ШАГ 3: Скопировать код макроса"
+    ws_instruction["A9"].font = Font(bold=True)
+    ws_instruction["A10"] = (
+        "Скопируйте код из ячеек ниже и вставьте его в открывшееся окно модуля"
+    )
+
+    ws_instruction["A32"] = "ШАГ 4: Запустить макрос"
+    ws_instruction["A32"].font = Font(bold=True)
+    ws_instruction["A33"] = (
+        'Закройте редактор VBA. В Excel нажмите Alt + F8, выберите макрос "FormatReport" и нажмите "Выполнить"'
+    )
+
+    # VBA-код макроса
+    vba_code_lines = [
+        "'--- НАЧАЛО МАКРОСА ---",
+        "",
+        "Sub FormatReport()",
+        "    Dim ws1 As Worksheet",
+        "    Dim ws2 As Worksheet",
+        "    Dim lastRow As Long",
+        "    ",
+        "    Set ws1 = ThisWorkbook.Sheets(\"Сводка\")",
+        "    Set ws2 = ThisWorkbook.Sheets(\"Топ продуктов\")",
+        "    ",
+        "    ws1.Columns(\"A:B\").AutoFit",
+        "    ws1.Rows(1).Font.Bold = True",
+        "    ws1.Rows(1).Interior.Color = RGB(200, 200, 200)",
+        "    ",
+        "    ws2.Columns(\"A:D\").AutoFit",
+        "    ws2.Rows(1).Font.Bold = True",
+        "    ws2.Rows(1).Interior.Color = RGB(200, 200, 200)",
+        "    ",
+        "    lastRow = ws2.Cells(ws2.Rows.Count, 1).End(xlUp).Row",
+        "    If lastRow > 1 Then",
+        "        With ws2.Range(\"A1:D\" & lastRow)",
+        "            .Borders.LineStyle = xlContinuous",
+        "            .Borders.Weight = xlThin",
+        "        End With",
+        "    End If",
+        "    ",
+        "    MsgBox \"Отчет успешно отформатирован!\", vbInformation, \"Аналитика\"",
+        "End Sub",
+        "",
+        "Sub Auto_Open()",
+        "    Call FormatReport",
+        "End Sub",
+        "",
+        "'--- КОНЕЦ МАКРОСА ---",
+    ]
+
+    for i, line in enumerate(vba_code_lines):
+        ws_instruction.cell(row=13 + i, column=2, value=line)
+
+    ws_instruction.column_dimensions["A"].width = 40
+    ws_instruction.column_dimensions["B"].width = 70
+
+    # 3. Сохраняем и отдаем
+    output = BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    return StreamingResponse(
+        output,
+        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        headers={
+            "Content-Disposition": f"attachment; filename=analytics_{date_from}_to_{date_to}.xlsx"
+        },
+    )
