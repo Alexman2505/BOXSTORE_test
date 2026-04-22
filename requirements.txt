@@ -22,3 +22,5 @@ starlette==0.41.3
 typing_extensions==4.15.0
 tzdata==2026.1
 uvicorn==0.34.0
+robocorp==2.1.2
+requests==2.32.3

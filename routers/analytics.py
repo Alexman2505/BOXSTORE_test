@@ -24,6 +24,11 @@ from fastapi.responses import StreamingResponse
 from openpyxl import Workbook
 from openpyxl.styles import Font
 
+# ======= для робота =============
+import asyncio
+from concurrent.futures import ThreadPoolExecutor
+
+
 router = APIRouter(prefix="/analytics", tags=["analytics"])
 
 
@@ -301,9 +306,6 @@ async def upload_csv(
         "error_count": len(errors),
         "errors": errors[:20],  # возвращаем не более 20 ошибок
     }
-
-
-# ========== НОВЫЕ ЭНДПОИНТЫ ДЛЯ EXCEL ==========
 
 
 # ========== НОВЫЕ ЭНДПОИНТЫ ДЛЯ EXCEL ==========
@@ -655,3 +657,47 @@ async def export_analytics_with_macro_instruction(
             "Content-Disposition": f"attachment; filename=analytics_{date_from}_to_{date_to}.xlsx"
         },
     )
+
+
+# ========== НОВЫЙ ЭНДПОИНТ ДЛЯ RPA ==========
+
+
+@router.post("/rpa/test")
+async def run_rpa_test():
+    """
+    POST /analytics/rpa/test
+    Запускает RPA тест API (лёгкая версия без браузера)
+    """
+    from rpa_tester import quick_health_check
+
+    def run_robot():
+        return quick_health_check()
+
+    with ThreadPoolExecutor() as executor:
+        result = await asyncio.get_event_loop().run_in_executor(
+            executor, run_robot
+        )
+
+    return {
+        "robot_result": result,
+        "message": "RPA тест выполнен (лёгкий режим)",
+    }
+
+
+@router.post("/rpa/full-test")
+async def run_full_rpa_test():
+    """
+    POST /analytics/rpa/full-test
+    Полное тестирование всех эндпоинтов
+    """
+    from rpa_tester import full_api_test
+
+    def run_robot():
+        return full_api_test()
+
+    with ThreadPoolExecutor() as executor:
+        result = await asyncio.get_event_loop().run_in_executor(
+            executor, run_robot
+        )
+
+    return {"robot_result": result, "message": "Полный RPA тест выполнен"}
